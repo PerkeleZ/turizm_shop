@@ -8,30 +8,39 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    // Check if user is already logged in
-    const token = localStorage.getItem('token');
-    if (token) {
-      fetchUserProfile();
-    } else {
-      setLoading(false);
-    }
-  }, []);
-
+useEffect(() => {
   const fetchUserProfile = async () => {
     try {
       setLoading(true);
+
       const response = await authService.getProfile();
+
       setCurrentUser(response.data);
       setError(null);
+
     } catch (err) {
       console.error('Failed to fetch user profile:', err);
-      setError('Ошибка аутентификации. Пожалуйста, войдите снова.');
-      logout();
+
+      setError(
+        'Ошибка аутентификации. Пожалуйста, войдите снова.'
+      );
+
+      localStorage.removeItem('token');
+      setCurrentUser(null);
+
     } finally {
       setLoading(false);
     }
   };
+
+  const token = localStorage.getItem('token');
+
+  if (token) {
+    fetchUserProfile();
+  } else {
+    setLoading(false);
+  }
+}, []);
 
   const login = async (credentials) => {
     try {

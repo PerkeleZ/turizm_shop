@@ -1,7 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Container, Typography, Grid, Card, CardMedia, CardContent, CardActions, Button, Box, Rating, IconButton, Chip, InputBase } from '@mui/material';
-import { ShoppingCart, Favorite, FavoriteBorder, NavigateNext, NavigateBefore, LocalShipping, Security, Support, Terrain, AcUnit, WbSunny, DirectionsBike, Hiking, Park } from '@mui/icons-material';
+import {
+  Container, Typography, Grid, Card,
+  CardMedia, CardContent, CardActions,
+  Button, Box, Rating, InputBase
+} from '@mui/material';
+import {
+  ShoppingCart, NavigateNext, LocalShipping,
+  Security, Support, Terrain, AcUnit,
+  WbSunny, Hiking, Park
+} from '@mui/icons-material';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import 'swiper/css';
@@ -53,7 +61,6 @@ const swiperStyles = {
 const HomePage = () => {
   const [categories, setCategories] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
   const { addToCart } = useCart();
 
   // Slider images for tourism equipment
@@ -97,7 +104,7 @@ const HomePage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
+        
         const [categoriesResponse, productsResponse] = await Promise.all([
           productService.getCategories(),
           productService.getProducts({ in_stock: true })
@@ -108,15 +115,13 @@ const HomePage = () => {
         // Get 4 featured products
         const products = productsResponse.data.results || productsResponse.data;
         setFeaturedProducts(products.slice(0, 4));
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+          } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
 
-    fetchData();
-  }, []);
+  fetchData();
+}, []);
 
   const handleAddToCart = (product) => {
     addToCart(product);
